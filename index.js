@@ -38,15 +38,23 @@ client.on('message', async (message) => {
 
     //If the type of channel the message is sent in is text, this code will run.
     if (message.channel.type === "text") {
+        // Is the users message doesn't start with the prefix then the bot will ignore that message.
         if (!message.content.startsWith(prefix)) return;
 
+        // This is a dummy command which I use to see if the bot is online and responding.
         if (message.content === `${prefix}ping`) return message.channel.send('Pong.');
 
         if (message.content.startsWith(`${prefix}blacklist`)) {
+            // The bot will search the array of authorised ids and look to see if the authors id is in there, if it isn't then the bot will return.
+            if (!config.ownerID.includes(message.author.id)) return message.channel.send("You're not a bot developer!");
+            /* The bot is now checking to see if a userID has been specified.
+                If a userID has not been specified the bot will return and notify the user.
+            */
             if (!args[0]) {
                 return message.channel.send("You must supply a user ID to blacklist.")
             } else {
                 global.nf = true
+                global.bid = ""
                 let reference = db.collection("clients")
                 let queryRef = db.collection("clients").where("VentingID", "==", args[0]).get()
                     .then(snapshot => {
@@ -56,15 +64,18 @@ client.on('message', async (message) => {
                         }
 
                         snapshot.forEach(doc => {
+                            global.bid = doc.id
                             db.collection("clients").doc(doc.id).update({ Blacklisted: true })
                         });
                     })  
                     .then(() => {
                         if (!global.nf) return;
+                        client.users.get(global.bid).send(`You have been blacklisted from using SafeVenting by: \`${message.author.name}\`.`)
+                        
                         return message.channel.send(`Success: \`${args[0]}\` has been blacklisted.`)
                     })
                     .catch(err => {
-                        return message.channel.send('An unexpected error has occured please contact MrShadow.');
+                        console.log(err)
                     })
             }
         }
@@ -77,6 +88,7 @@ client.on('message', async (message) => {
             db.collection("clients").doc(message.author.id).get()
                 .then(async(doc) => {
                     let id = doc.data().VentingID
+                    if (doc.data().Blacklisted) return message.channel.send('You have been blacklisted from using SafeZone Venting.')
                     if (doc.data().ToggleVenting) return message.channel.send('You have already enabled venting! To disable it please type: `disableVenting`.')
                     await db.collection("clients").doc(message.author.id).update({
                         ToggleVenting: true
@@ -97,6 +109,7 @@ client.on('message', async (message) => {
             db.collection("clients").doc(message.author.id).get()
                 .then(async(doc) => {
                     let id = doc.data().VentingID
+                    if (doc.data().Blacklisted) return message.channel.send('You have been blacklisted from using SafeZone Venting.')
                     if (!doc.data().ToggleVenting) return message.channel.send('Venting is disabled already! To enable it please type: `enableVenting`')
                     await db.collection("clients").doc(message.author.id).update({
                         ToggleVenting: false
@@ -113,6 +126,7 @@ client.on('message', async (message) => {
         await db.collection("clients").doc(message.author.id).get()
             .then((doc) => {
                 if(!doc.exists) return;
+                if (doc.data().Blacklisted) return;
                 if (doc.data().ToggleVenting) {
 
                 } else {

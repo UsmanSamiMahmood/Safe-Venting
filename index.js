@@ -4,7 +4,7 @@ const config = require("./config.json");
 const { db } = require("./database/handler.js");
 const color = require("colors");
 const figlet = require("figlet");
-const shortid = require("shortid");
+const customId = require("custom-id");
 const { token } = require("./secrets/token.json")
 
 // Below we are telling the bot what to do on the 'ready' event.
@@ -23,10 +23,8 @@ client.on('message', async (message) => {
     let command = messageArray[0].toLowerCase();
     let args = messageArray.slice(1);
 
-    var number = Math.random();
-    number.toString(36);
-    var id = number.toString(36).substr(2, 9);
-    db.collection('clients').doc(message.author.id).get()
+    var id = customId({ randomLength: 1 })
+    await db.collection('clients').doc(message.author.id).get()
         .then((doc) => {
             if (!doc.exists) {
                 db.collection('clients').doc(message.author.id).set({
@@ -92,6 +90,7 @@ client.on('message', async (message) => {
 
         await db.collection("clients").doc(message.author.id).get()
             .then((doc) => {
+                if(!doc.exists) return;
                 if (doc.data().ToggleVenting) {
 
                 } else {
@@ -111,7 +110,7 @@ console.log("Version:", "0.0.2".yellow.bold);
 console.log("Github:", "https://github.com/UsmanSamiMahmood/Safe-Venting-JS/".magenta.bold);
 console.log("\nDeveloper: Usman Mahmood".underline.red.bold)
 
-client.login(config.token)
+client.login(token)
     .then(() => {
         console.log(`\nLogged in on:`, `${client.user.tag}.`.bgBlack.brightGreen)
     })

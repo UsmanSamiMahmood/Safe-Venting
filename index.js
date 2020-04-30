@@ -41,11 +41,33 @@ client.on('message', async (message) => {
         if (!message.content.startsWith(prefix)) return;
 
         if (message.content === `${prefix}ping`) return message.channel.send('Pong.');
-    }
 
-    if (message.content === `${prefix}blacklist`) {
-        channel = message.channel.name;
-        
+        if (message.content.startsWith(`${prefix}blacklist`)) {
+            if (!args[0]) {
+                return message.channel.send("You must supply a user ID to blacklist.")
+            } else {
+                global.nf = true
+                let reference = db.collection("clients")
+                let queryRef = db.collection("clients").where("VentingID", "==", args[0]).get()
+                    .then(snapshot => {
+                        if (snapshot.empty) {
+                            global.nf = false
+                            return message.channel.send(`**ERROR**: Failed to find \`${args[0]}\` in the database, are you sure this ID exists?`)
+                        }
+
+                        snapshot.forEach(doc => {
+                            db.collection("clients").doc(doc.id).update({ Blacklisted: true })
+                        });
+                    })  
+                    .then(() => {
+                        if (!global.nf) return;
+                        return message.channel.send(`Success: \`${args[0]}\` has been blacklisted.`)
+                    })
+                    .catch(err => {
+                        return message.channel.send('An unexpected error has occured please contact MrShadow.');
+                    })
+            }
+        }
     }
     
     //If the type of channel the message is sent in is DM, this code will be run.

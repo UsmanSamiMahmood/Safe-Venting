@@ -5,16 +5,28 @@ const { db } = require("./database/handler.js");
 const color = require("colors");
 const figlet = require("figlet");
 const customId = require("custom-id");
-const { token } = require("./secrets/token.json")
-const { black, red_light, bright_green } = require("./colors.json")
+const { token } = require("./secrets/token.json");
+const { black, red_light, bright_green } = require("./colors.json");
+const main = require("./secrets/main.js")
 
 // Below we are telling the bot what to do on the 'ready' event.
 client.on('ready', () => {
     client.user.setActivity(`${config.statusName}`, { type: "WATCHING" });
 })
 
+client.on('guildMemberRemove', async (client, member) => {
+    await db.collection("clients").doc(member.id).get()
+        .then((doc) => {
+            if (!doc.exists) {
+                return;
+            } else {
+                db.collection("clients").doc(doc.id).update({ ToggleVenting: false })
+            }
+        })
+
+})
+
 client.on('message', async (message) => {
-    console.log("Active");
 
     //If the author of the message is a bot then the bot will ignore the message.
     if (message.author.bot) return;
@@ -32,12 +44,26 @@ client.on('message', async (message) => {
     await db.collection('clients').doc(message.author.id).get()
         .then((doc) => {
             if (!doc.exists) {
-                db.collection('clients').doc(message.author.id).set({
-                    Blacklisted: false,
-                    ToggleVenting: false,
-                    UserID: message.author.id,
-                    VentingID: id1,
-                })
+                let queryRef = db.collection("clients").where("VentingID", "==", id1).get()
+                    .then(snapshot => {
+                        if (snapshot.empty) {
+                            db.collection('clients').doc(message.author.id).set({
+                                Blacklisted: false,
+                                ToggleVenting: false,
+                                UserID: message.author.id,
+                                VentingID: id1,
+                            })
+                        } else {
+                            let id2 = customId({ randomLength: 2 })
+                            db.collection('clients').doc(message.author.id).set({
+                                Blacklisted: false,
+                                ToggleVenting: false,
+                                UserID: message.author.id,
+                                VentingID: id2,
+                            })
+                        }
+                    })
+                
             }
         })
 
@@ -95,6 +121,7 @@ client.on('message', async (message) => {
                                 return message.channel.send(`**ERROR**: Failed to balacklist \`${args[0]}\`, please supply a reason.`)
                             };
                             db.collection("clients").doc(doc.id).update({ Blacklisted: true })
+                            db.collection("clients").doc(doc.id).update({ BlacklistReason: reason })
                         });
                     })  
                     .then(() => {
@@ -139,7 +166,7 @@ client.on('message', async (message) => {
                         snapshot.forEach(doc => {
                             global.wid = doc.id
                             if (!doc.data().Blacklisted) {
-                                global.nf = false;
+                                global.nf3 = false;
                                 return message.channel.send(`**ERROR**: \`${args[0]}\` is already whitelisted.`)
                             };
                             let reason = args.slice(1).join(" ");
@@ -148,6 +175,7 @@ client.on('message', async (message) => {
                             return message.channel.send(`**ERROR**: Failed to balacklist \`${args[0]}\`, please supply a reason.`)
                             };
                             db.collection("clients").doc(doc.id).update({ Blacklisted: false })
+                            db.collection("clients").doc(doc.id).update({ BlacklistReason: reason })
                         })   
                     })
                     .then(() => {
@@ -217,9 +245,59 @@ client.on('message', async (message) => {
                         return message.channel.send('Message Sent :white_check_mark:').then(m => m.delete( { timeout: 5000 }))
                     })
                     .catch(err => {
-                        console.err(err);
+                        console.log(err);
                         return message.channel.send(`**ERROR**: An unexpected error has occured, please contact MrShadow **immediately**.`)
                     })
+            }
+        }
+
+        if (message.content.startsWith(`${prefix}help`)) {
+            if (!args[0]) {
+                let embed = new MessageEmbed()
+                .setColor(black)
+                .setTitle('Safe Ventings Commands.')
+                .setDescription(`Need more help? Do ${prefix}help <command name>`)
+                .addField(`${prefix}r <id> <message>`, `Sends a message to the specified ID.`)
+                .addField(`${prefix}blacklist <id> <reason>`, `Blacklists the specified ID from using SafeVenting.`)
+                .addField(`${prefix}whitelist <id> <reason>`, `Whitelists the specified ID from using SafeVenting.`)
+                .setTimestamp()
+                .setFooter('SafeVenting, a bot created with love by MrShadow.')
+
+                return message.channel.send(embed);
+
+            } else {
+                switch (args[0]) {
+                    case 'r':
+                        let embed = new MessageEmbed()
+                        .setColor(black)
+                        .setTitle('Reply Command')
+                        .setDescription(`Usage: ${prefix}r <id> <message> \nThis command will send a message to the specified ID, and also performs several checks to make sure nothing goes wrong.`)
+                        .setTimestamp()
+                        .setFooter('SafeVenting, a bot created with love by MrShadow.')
+
+                        message.channel.send(embed);
+                        break;
+                    case 'blacklist':
+                        let embed2 = new MessageEmbed()
+                        .setColor(black)
+                        .setTitle('Blacklist Command')
+                        .setDescription(`Usage: ${prefix}blacklist <id> <reason> \nThis command will blacklist the specified ID, and also performs several checks to make sure nothing goes wrong.`)
+                        .setTimestamp()
+                        .setFooter('SafeVenting, a bot created with love by MrShadow.')
+
+                        message.channel.send(embed2);
+                        break;
+                    case 'whitelist':
+                        let embed3 = new MessageEmbed()
+                        .setColor(black)
+                        .setTitle('Whitelist Command')
+                        .setDescription(`Usage: ${prefix}whitelist <id> <reason> \nThis command will whitelist the specified ID, and also performs several checks to make sure nothing goes wrong.`)
+                        .setTimestamp()
+                        .setFooter('SafeVenting, a bot created with love by MrShadow.')
+
+                        message.channel.send(embed3);
+                        break;
+                }
             }
         }
     }
@@ -251,10 +329,11 @@ client.on('message', async (message) => {
                         let embed = new MessageEmbed()
                         .setColor(black)
                         .setTitle(`User ${id} turned SafeVenting \`on\`!`)
-                        .setDescription(`To reply to them you must send: \`${prefix}r ${id}\``)
+                        .setDescription(`To reply to them you must send: \`${prefix}r ${id} <message>\``)
                         chan.send(embed)
                         chan.send(`<@&${config.roleid}>`)
                     })
+                    main.start(config.lchannelon, id, message.author.tag)
                     return message.channel.send('SafeVenting has been toggled on :white_check_mark: ')
                 })
         }
@@ -273,6 +352,7 @@ client.on('message', async (message) => {
                             .setDescription(`User \`${id}\` has turned SafeVenting off!`)
                         chan.send(embed)
                     })
+                    main.end(config.lchanneloff, id, message.author.tag)
                     return message.channel.send('SafeVenting has been toggled off :x:')
                 })
         } 

@@ -6,5 +6,5 @@ admin.initializeApp({
     databaseURL: "https://safeventinglatest.firebaseio.com"
   });
 
-const db = admin.firestore()
+const db = admin.firestore();
 exports.db = db;

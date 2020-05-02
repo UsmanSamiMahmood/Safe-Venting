@@ -21,7 +21,7 @@ Alert sent to output channel and role being pinged:
 
 ![Screenshot](https://cdn.discordapp.com/attachments/704774573408649278/705951742214406185/unknown.png)
 
-Now that venting is enabled, anyone will be able to send messages to that user via the **prefixr <id> <message>** command.
+Now that venting is enabled, anyone will be able to send messages to that user via the **prefixr id message** command.
 Once the commmand is run, the bot will send a message to the channel confirming that it has been sent and then deletes that same message after 5 seconds.
 
 An example where I am sending a message to myself:
@@ -31,3 +31,17 @@ An example where I am sending a message to myself:
 Below is a screenshot of what the user sees in their direct messages:
 
 ![Screenshot](https://cdn.discordapp.com/attachments/704774573408649278/705954240266502175/unknown.png)
+
+## What if someone abuses the bot and I want to blacklist them?
+No problem, just use the command **prefixblacklist id reason** to blacklist a user.
+Once a user is blacklisted they will no longer be able to enable venting, recieve messages and intereact with the bot at all.
+The blacklisted user will also recieve a direct message from the bot notifying them that they have been blacklisted as well as the reason in an embed.
+
+Blacklist command in use:
+
+![Screenshot](https://cdn.discordapp.com/attachments/704774573408649278/705966354070634546/unknown.png)
+
+Notification which the blacklisted user recieves:
+
+![Screenshot](https://cdn.discordapp.com/attachments/704774573408649278/705966646761619507/unknown.png)
+

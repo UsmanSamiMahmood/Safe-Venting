@@ -2,5 +2,9 @@
 
 This project is powered by [Node.JS](https://nodejs.org/en/) and [Discord.JS](https://discord.js.org/#/)
 
-### Safe-Venting
+# Safe-Venting
  A bot I made which allows users to vent anonymously.
+
+## How does it work?
+First, a user must send the bot a direct message which is shown below, then the user will be asked if they want to enable venting.
+![Screenshot](https://gyazo.com/a24e1e1c68d048c2c8b1354db177d448)

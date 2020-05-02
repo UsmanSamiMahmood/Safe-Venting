@@ -316,14 +316,14 @@ client.on("message", async (message) => {
             global.off = false;
             db.collection("clients").doc(message.author.id).get()
                 .then(async(doc) => {
-                    let id = doc.data().VentingID
+                    let id = doc.data().VentingID;
                     
                     /* Below we have 2 checks, first we have a check to see if the user is blacklisted.
                        The users document will be checked in the database and if Blacklisted is true then the bot will return.
                        The second check will check to see if the user has already enabled venting, if they have the bot will return and notify the user.
                     */
-                    if (doc.data().Blacklisted) return message.channel.send('You have been blacklisted from using SafeZone Venting.')
-                    if (doc.data().ToggleVenting) return message.channel.send('You have already enabled venting! To disable it please type: `disableVenting`.')
+                    if (doc.data().Blacklisted) return message.channel.send('You have been blacklisted from using SafeZone Venting.');
+                    if (doc.data().ToggleVenting) return message.channel.send('You have already enabled venting! To disable it please type: `disableVenting`.');
 
                     /* If the two checks above have both returned false,
                        the bot will update the ToggleVenting boolean in the database to true.
@@ -340,17 +340,17 @@ client.on("message", async (message) => {
                         chan.send(embed)
                         chan.send(`<@&${config.roleid}>`)
                     })
-                    main.start(config.lchannelon, id, message.author.tag)
-                    return message.channel.send('SafeVenting has been toggled on :white_check_mark: ')
+                    main.start(config.lchannelon, id, message.author.tag);
+                    return message.channel.send('SafeVenting has been toggled on :white_check_mark: ');
                 })
         }
 
         if (message.content === "disableVenting") {
             db.collection("clients").doc(message.author.id).get()
                 .then(async(doc) => {
-                    let id = doc.data().VentingID
-                    if (doc.data().Blacklisted) return message.channel.send('You have been blacklisted from using SafeZone Venting.')
-                    if (!doc.data().ToggleVenting) return message.channel.send('Venting is disabled already! To enable it please type: `enableVenting`')
+                    let id = doc.data().VentingID;
+                    if (doc.data().Blacklisted) return message.channel.send('You have been blacklisted from using SafeZone Venting.');
+                    if (!doc.data().ToggleVenting) return message.channel.send('Venting is disabled already! To enable it please type: `enableVenting`');
                     await db.collection("clients").doc(message.author.id).update({
                         ToggleVenting: false
                     })
@@ -359,8 +359,8 @@ client.on("message", async (message) => {
                             .setDescription(`User \`${id}\` has turned SafeVenting off!`)
                         chan.send(embed)
                     })
-                    main.end(config.lchanneloff, id, message.author.tag)
-                    return message.channel.send('SafeVenting has been toggled off :x:')
+                    main.end(config.lchanneloff, id, message.author.tag);
+                    return message.channel.send('SafeVenting has been toggled off :x:');
                 })
         } 
 
@@ -379,11 +379,10 @@ client.on("message", async (message) => {
                         .setFooter('SafeVenting, a bot created with love by MrShadow.')
                         chan.send(embed)
                     })
-                    return message.channel.send('Message Sent :white_check_mark:').then(m => m.delete( { timeout: 5000 }))
+                    return message.channel.send('Message Sent :white_check_mark:').then(m => m.delete( { timeout: 5000 }));
                 } else {
                     if (!global.off) return;
-                    console.log('Activated')
-                    return message.channel.send("Do you wish to enable venting? \nType: `enableVenting`")
+                    return message.channel.send("Do you wish to enable venting? \nType: `enableVenting`");
                 }
             }) 
         

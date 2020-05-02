@@ -45,3 +45,17 @@ Notification which the blacklisted user recieves:
 
 ![Screenshot](https://cdn.discordapp.com/attachments/704774573408649278/705966646761619507/unknown.png)
 
+## Can I whitelist someone after they've been blacklisted?
+Yes, just use the command **prefixwhitelist id reason** to whitelist a user.
+This command works similarly to blacklist, once a user is whitelisted, they will be able to use the safe venting bot again.
+The whitelisted user will also recieve a direct message from the bot notifying them that they have been whitelisted as well as the reason in an embed.
+
+Whitelist command in use:
+
+![Screenshot](https://cdn.discordapp.com/attachments/704774573408649278/705968777174581318/unknown.png)
+
+Notification which the whitelisted user recieves:
+
+![Screenshot](https://cdn.discordapp.com/attachments/704774573408649278/705968995425189898/unknown.png)
+
+**WARNING**: I am yet to add support for attachments being sent in the chat so if you attempt to do this, the bot wil encounter an error.

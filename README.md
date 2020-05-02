@@ -7,4 +7,4 @@ This project is powered by [Node.JS](https://nodejs.org/en/) and [Discord.JS](ht
 
 ## How does it work?
 First, a user must send the bot a direct message which is shown below, then the user will be asked if they want to enable venting.
-![Screenshot](https://cdn.discordapp.com/attachments/704774573408649278/705949863635845230/a24e1e1c68d048c2c8b1354db177d448.mp4)
+![Screenshot](https://cdn.discordapp.com/attachments/704774573408649278/705950317069729852/unknown.png)

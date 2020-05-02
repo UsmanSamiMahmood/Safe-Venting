@@ -14,6 +14,10 @@ client.on("ready", () => {
     client.user.setActivity(`${config.statusName}`, { type: "WATCHING" });
 })
 
+/* Below we tell the bot what to do on the 'guildMemberRemove' event.
+   When someone leaves the ToggleVenting boolean in their document within the database will be set to ToggleVenting.
+   This will be useful incases where someone will try to send a message to that user but the bot will encounter an error since it cannot send direct messages to people who are not in the server. 
+*/
 client.on("guildMemberRemove", async (client, member) => {
     await db.collection("clients").doc(member.id).get()
         .then((doc) => {
@@ -120,8 +124,11 @@ client.on("message", async (message) => {
                                 global.nf = false;
                                 return message.channel.send(`**ERROR**: Failed to balacklist \`${args[0]}\`, please supply a reason.`)
                             };
-                            db.collection("clients").doc(doc.id).update({ Blacklisted: true })
-                            db.collection("clients").doc(doc.id).update({ BlacklistReason: reason })
+                            db.collection("clients").doc(doc.id).update({
+                                Blacklisted: true,
+                                BlacklistReason: reason,
+                                ToggleVenting: false
+                            });
                         });
                     })  
                     .then(() => {

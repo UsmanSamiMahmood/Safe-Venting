@@ -60,4 +60,4 @@ Notification which the whitelisted user recieves:
 
 **WARNING**: I am yet to add support for attachments being sent in the chat so if you attempt to do this, the bot wil encounter an error.
 
-**NOTE:**: Will be adding seperate tutorial on setting up the database soon.
+**NOTE**: Will be adding seperate tutorial on setting up the database soon.

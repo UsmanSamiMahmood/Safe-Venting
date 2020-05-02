@@ -59,3 +59,5 @@ Notification which the whitelisted user recieves:
 ![Screenshot](https://cdn.discordapp.com/attachments/704774573408649278/705968995425189898/unknown.png)
 
 **WARNING**: I am yet to add support for attachments being sent in the chat so if you attempt to do this, the bot wil encounter an error.
+
+**NOTE:**: Will be adding seperate tutorial on setting up the database soon.
